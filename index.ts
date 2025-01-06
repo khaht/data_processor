@@ -14,10 +14,15 @@ async function main(): Promise<void> {
         demandOption: true,
         describe: 'Input CSV file path',
       },
-      token: {
+      authorization: {
         type: 'string',
         demandOption: true,
-        describe: 'API token',
+        describe: 'Authorization token',
+      },
+      capillaryHost: {
+        type: 'string',
+        demandOption: true,
+        describe: 'Capillary host',
       },
       concurrency: {
         type: 'number',
@@ -46,7 +51,8 @@ async function main(): Promise<void> {
       },
     })
     .help().argv) as CliArguments;
-  const { input, token, ...config } = argv;
+  const { input, authorization, ...config } = argv;
+
   // check input is csv file
   if (!input.endsWith('.csv')) {
     console.error('Invalid input file. Please provide a CSV file');
@@ -54,7 +60,7 @@ async function main(): Promise<void> {
   }
   const processor = new DataProcessor({
     ...config,
-    apiToken: token,
+    authorization,
   });
 
   try {

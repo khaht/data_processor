@@ -14,7 +14,8 @@ export class DataProcessor {
   private batchSize: number;
   private retryAttempts: number;
   private retryDelay: number;
-  private apiToken: string;
+  private authorization: string;
+  private capillaryHost: string;
 
   constructor(config: ProcessorConfig = {}) {
     this.limit = pLimit(config.concurrency || 50);
@@ -22,7 +23,8 @@ export class DataProcessor {
     this.batchConcurrentLimit = config.batchConcurrentLimit || 10;
     this.retryAttempts = config.retryAttempts || 3;
     this.retryDelay = config.retryDelay || 500;
-    this.apiToken = config.apiToken || '';
+    this.authorization = config.authorization || '';
+    this.capillaryHost = config.capillaryHost || '';
   }
 
   async processCSVFile(filePath: string): Promise<ProcessingResult> {
@@ -127,11 +129,11 @@ export class DataProcessor {
       const userIds = users.map((user) => user.loyalty_user_id).join(',');
       const result = await this.makeRequestWithRetry(async () => {
         const response = await axios.get<UserDetails>(
-          `https://apac.api.capillarytech.com/v1.1/customer/get?format=json&external_id=${userIds}&user_id=true&segments=true&tier_upgrade_criteria=true&slab_history=true&format=json&transactions=false&notes=false&user_id=true&mlp=true&expiry_schedule=true&expired_points=true&point_summary=true`,
+          `${this.capillaryHost}/customer/get?format=json&external_id=${userIds}&user_id=true&segments=true&tier_upgrade_criteria=true&slab_history=true&format=json&transactions=false&notes=false&user_id=true&mlp=true&expiry_schedule=true&expired_points=true&point_summary=true`,
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: this.apiToken,
+              Authorization: this.authorization,
             },
           },
         );

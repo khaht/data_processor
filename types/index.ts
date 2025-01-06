@@ -4,8 +4,10 @@ export interface ProcessorConfig {
   batchSize?: number;
   retryAttempts?: number;
   retryDelay?: number;
-  apiToken?: string;
+  authorization?: string;
+  capillaryHost?: string;
 }
+export type CliArguments = Required<ProcessorConfig> & { input: string };
 
 export interface CSVUser {
   [key: string]: any;
@@ -87,14 +89,4 @@ export interface ProcessingResult {
   successful: ProcessedUser[];
   failed: ProcessedUser[];
   totalProcessed: number;
-}
-
-export interface CliArguments {
-  input: string;
-  token: string;
-  concurrency?: number;
-  batchSize?: number;
-  batchConcurrentLimit?: number;
-  retryAttempts?: number;
-  retryDelay?: number;
 }
